@@ -26,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
     try {
       final response = await http.post(
         Uri.parse(
-            'http://localhost:4000/api/auth/login'), // Replace with your backend API endpoint
+            'http://172.20.10.4:4000/api/auth/login'), // Replace with your backend API endpoint
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -51,7 +51,9 @@ class _LoginPageState extends State<LoginPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const HomePage(),
+            builder: (context) => const HomePage(
+              role: null,
+            ),
           ),
         );
       } else {

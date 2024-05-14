@@ -5,7 +5,7 @@ import 'package:flutter_application_1/components/my_drawer.dart';
 import 'package:flutter_application_1/components/my_sliver_app_bar.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({super.key, required role});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -29,10 +29,10 @@ class _HomePageState extends State<HomePage> {
                     color: Theme.of(context).colorScheme.secondary,
                   ),
                   //my current location
-                  MyCurrentLocation(),
+                  // MyCurrentLocation(),
 
-                  /// description box
-                  MyDescription(),
+                  // /// description box
+                  // MyDescription(),
 
                   ///
                 ],

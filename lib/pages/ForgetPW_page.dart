@@ -19,6 +19,9 @@ class ForgetPW extends StatefulWidget {
 
 class _ForgetPWState extends State<ForgetPW> {
   final TextEditingController emailController = TextEditingController();
+
+  get resettoken => null;
+
   // final TextEditingController passwordController = TextEditingController();
   // final TextEditingController confirmpasswordController = TextEditingController();
   void _handelForgetPassword() async {
@@ -26,7 +29,7 @@ class _ForgetPWState extends State<ForgetPW> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:4000/api/auth/forgot-password'),
+        Uri.parse('http://172.20.10.4:4000/api/auth/forgot-password'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -39,6 +42,12 @@ class _ForgetPWState extends State<ForgetPW> {
         // Password reset email sent successfully
         final data = jsonDecode(response.body);
         final String resetToken = data['resettoken'];
+
+        print(
+            "**************reset token in page forget  page ***********************");
+        print(resetToken);
+
+        // print("resttoken is in the forget page ${resettoken} ");
 
         // Navigate to the ResetPasswordScreen and pass the resetToken
         Navigator.push(
@@ -79,7 +88,7 @@ class _ForgetPWState extends State<ForgetPW> {
               size: 72,
               color: Theme.of(context).colorScheme.inversePrimary,
             ),
-            Text("forget your password "),
+            Text("forget password "),
             //email
             const SizedBox(height: 25),
             MyTextField(

@@ -1,10 +1,12 @@
-import "package:flutter/material.dart";
+import 'package:flutter/material.dart';
 
-class MySliverAppBar extends StatelessWidget {
-  final Widget child;
+class MySliverAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Widget title;
 
-  const MySliverAppBar({super.key, required this.child, required this.title});
+  const MySliverAppBar({super.key, required this.title});
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   @override
   Widget build(BuildContext context) {
@@ -21,14 +23,11 @@ class MySliverAppBar extends StatelessWidget {
         )
       ],
       backgroundColor: Theme.of(context).colorScheme.background,
-      // foregroundColor: Theme.of(context).colorScheme.inversePrimary,
-      title: const Text("M A G F L O W "),
+      title: title,
       flexibleSpace: FlexibleSpaceBar(
-        background: Padding(
-          padding: const EdgeInsets.only(left: 20, right: 0, top: 0),
-          child: child,
+        background: const Padding(
+          padding: EdgeInsets.only(left: 20, right: 0, top: 0),
         ),
-        
       ),
     );
   }

@@ -1,48 +1,3 @@
-// class HomePage extends StatefulWidget {
-//   const HomePage({super.key, required role});
-
-//   @override
-//   State<HomePage> createState() => _HomePageState();
-// }
-
-// class _HomePageState extends State<HomePage> {
-//   @override
-//   Widget build(BuildContext context) {
-//     final role = Provider.of<AuthProvider>(context).role;
-
-//     return Scaffold(
-//       drawer: const MyDrawer(), // like a navbar -> should be a component
-//       body: NestedScrollView(
-//         headerSliverBuilder: (context, innerBoxIsScrolled) => [
-//           MySliverAppBar(
-//               child: Column(
-//                 mainAxisAlignment: MainAxisAlignment.end,
-//                 children: [
-//                   // my current location
-//                   Divider(
-//                     indent: 25,
-//                     endIndent: 25,
-//                     color: Theme.of(context).colorScheme.secondary,
-//                   ),
-//                   //my current location
-//                   // MyCurrentLocation(),
-
-//                   // /// description box
-//                   Text('Your Role: $role'), // Display the retrieved role
-
-//                   ///
-//                 ],
-//               ),
-//               title: Text("title"))
-//         ],
-//         body: Container(
-//           color: Color.fromARGB(255, 202, 195, 195),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -55,7 +10,7 @@ import 'package:flutter_application_1/components/my_sliver_app_bar.dart';
 import 'package:flutter_application_1/components/commandCard.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart'; // For date formatting
-
+import 'package:flutter_application_1/auth/auth_provider.dart';
 import 'package:http/http.dart'
     as http; // in case of probl = (run this in the cmd) dart pub add fetch_client
 
@@ -96,8 +51,7 @@ class _HomePageState extends State<HomePage> {
     ),
   ];
 
-  // get http => null; // List to track "selected" commandes
-
+  
   @override
   void initState() {
     super.initState();
@@ -105,35 +59,71 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _fetchCommandes() async {
-    final response = await http
-        .get(Uri.parse('http://172.20.10.4:4000/api/bons/allcommandsinterne'));
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body) as List<dynamic>;
-      // print('this is the data $data');
-      setState(() {
-        _commandes = data
-            .map((commandeJson) {
-              if (commandeJson == null) {
-                return Commande.defaultCommande();
-              } else {
-                return Commande(
-                  date: commandeJson['date'] != null
-                      ? DateTime.parse(commandeJson['date'])
-                      : DateTime.now(),
-                  typecommande: commandeJson['typecommande'] ?? 'Default',
-                  id: commandeJson['id'] ?? "0",
-                  validation: commandeJson['validation'] ?? 0,
-                  number: commandeJson['number'] ?? '0',
-                );
-              }
-            })
-            .toList()
-            .cast<Commande>();
-      });
+    String url;
+    Map<String, String> queryParams = {};
+
+    // retrive the user role and the id from the provider
+    final _userRole = context.read<AuthProvider>().role;
+    print("the role is $_userRole");
+
+    final _id = context.read<AuthProvider>().id;
+    print("the id is $_id");
+
+    // we have only one magainier and one directore with no id of them in the bonCommand int ->
+    // send the role and based on the validation value -> getAllCommand for the roles
+    if (_userRole == 'magasinier' || _userRole == 'director') {
+      url =
+          'http://172.20.10.4:4000/api/bons/getAllBonCommandInterneFFordirectorMagazinier';
+      queryParams['role'] = _userRole;
+    } else if (_userRole == 'structureresponsable') {
+      final id_structureresponsable = context.read<AuthProvider>().id;
+      url =
+          'http://172.20.10.4:4000/api/bons/allcomandsforresposnable/$id_structureresponsable';
     } else {
+      final id_consommateur = context.read<AuthProvider>().id;
+      url =
+          'http://172.20.10.4:4000/api/bons/consumer-commands/$id_consommateur';
+    }
+
+    final uri = Uri.parse(url).replace(queryParameters: queryParams);
+
+    try {
+      final response = await http.get(uri);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body) as List<dynamic>;
+        setState(() {
+          _commandes = data
+              .map((commandeJson) {
+                if (commandeJson == null) {
+                  return Commande.defaultCommande();
+                } else {
+                  return Commande(
+                    date: commandeJson['date'] != null
+                        ? DateTime.parse(commandeJson['date'])
+                        : DateTime.now(),
+                    typecommande: commandeJson['typecommande'] ?? 'Default',
+                    id: commandeJson['id'] ?? "0",
+                    validation: commandeJson['validation'] ?? 0,
+                    number: commandeJson['number'] ?? '0',
+                  );
+                }
+              })
+              .toList()
+              .cast<Commande>();
+        });
+      } else {
+        setState(() {
+          _commandes = [];
+        });
+        throw Exception(
+            'Error fetching commandes internes: ${response.statusCode}');
+      }
+    } catch (e) {
       setState(() {
-        _commandes = staticCommandes; // Use static data in case of API failure
+        _commandes = [];
       });
+      print('Error fetching commands: $e');
     }
   }
 

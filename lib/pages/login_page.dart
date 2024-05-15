@@ -3,16 +3,17 @@ import "package:flutter/material.dart";
 import "package:flutter/widgets.dart";
 import "package:flutter_application_1/components/my_button.dart";
 import "package:flutter_application_1/components/my_textfield.dart";
-
+import 'package:flutter_application_1/auth/auth_provider.dart';
+import "package:provider/provider.dart";
 import "home_page.dart";
 import 'dart:convert';
 import 'package:http/http.dart'
-    as http; // in case of probl = (run this in the cmd) dart pub add fetch_client
+    as http; 
 
 class LoginPage extends StatefulWidget {
   final void Function()? onTap;
 
-  const LoginPage({super.key, required this.onTap});
+  const LoginPage({super.key, this.onTap});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -26,7 +27,7 @@ class _LoginPageState extends State<LoginPage> {
     try {
       final response = await http.post(
         Uri.parse(
-            'http://localhost:4000/api/auth/login'), // Replace with your backend API endpoint
+            'http://172.20.10.4:4000/api/auth/login'), 
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -37,21 +38,21 @@ class _LoginPageState extends State<LoginPage> {
       );
 
       if (response.statusCode == 200) {
-        // Login successful
+       
         final data = jsonDecode(response.body);
         final token = data['accessToken'];
         final role = data['role'];
+        final id = data['id'];
 
-        // Store the token and role in state management (e.g., using Provider)
-        // Example using Provider:
-        // context.read<AuthProvider>().setToken(token);
-        // context.read<AuthProvider>().setRole(role);
-
-        // Navigate to the home page
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        authProvider.setRole(role);
+        authProvider.setID(id); 
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const HomePage(),
+            builder: (context) => const HomePage(
+                // role: null,
+                ),
           ),
         );
       } else {

@@ -5,7 +5,10 @@ import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
-  const ResetPasswordScreen({Key? key, required String resetToken}) : super(key: key);
+  final String resetToken;
+
+  const ResetPasswordScreen({Key? key, required this.resetToken})
+      : super(key: key);
 
   @override
   State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
@@ -16,20 +19,6 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
-  String _resetToken = '';
-
-  @override
-  void initState() {
-    super.initState();
-    _extractResetTokenFromUrl();
-  }
-
-  void _extractResetTokenFromUrl() {
-    final Uri uri = Uri.parse(Uri.decodeFull(Uri.base.toString()));
-    final params = uri.queryParameters;
-    _resetToken = params['token'] ?? '';
-  }
-
   Future<void> _resetPassword() async {
     final String newPassword = _newPasswordController.text.trim();
     final String confirmPassword = _confirmPasswordController.text.trim();
@@ -39,9 +28,15 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       return;
     }
 
+    final String resettoken = widget.resetToken;
+    print(
+        "**************reset token in page reset  page ***********************");
+    print(resettoken);
+
     try {
       final response = await http.post(
-        Uri.parse('http://your-backend-api/reset-password/${_resetToken}'),
+        Uri.parse(
+            'http://172.20.10.4:4000/api/auth/reset-password/$resettoken'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -52,13 +47,14 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       );
 
       if (response.statusCode == 200) {
-        // Password reset successful
+        print("reset password is working "); // Password reset successful
         // Navigate to the login screen or show a success message
       } else {
-        // Handle password reset error
+        print("Request failed with status: ${response.statusCode}");
+        print("Response body: ${response.body}");
       }
     } catch (e) {
-      // Handle network error
+      print("Exception during reset password: $e");
     }
   }
 

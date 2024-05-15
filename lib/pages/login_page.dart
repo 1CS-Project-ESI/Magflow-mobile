@@ -3,7 +3,8 @@ import "package:flutter/material.dart";
 import "package:flutter/widgets.dart";
 import "package:flutter_application_1/components/my_button.dart";
 import "package:flutter_application_1/components/my_textfield.dart";
-
+import 'package:flutter_application_1/auth/auth_provider.dart';
+import "package:provider/provider.dart";
 import "home_page.dart";
 import 'dart:convert';
 import 'package:http/http.dart'
@@ -12,7 +13,7 @@ import 'package:http/http.dart'
 class LoginPage extends StatefulWidget {
   final void Function()? onTap;
 
-  const LoginPage({super.key, required this.onTap});
+  const LoginPage({super.key, this.onTap});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -42,6 +43,9 @@ class _LoginPageState extends State<LoginPage> {
         final token = data['accessToken'];
         final role = data['role'];
 
+        // Store the token and role in state management
+        Provider.of<AuthProvider>(context, listen: false).setRole(role);
+
         // Store the token and role in state management (e.g., using Provider)
         // Example using Provider:
         // context.read<AuthProvider>().setToken(token);
@@ -52,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
           context,
           MaterialPageRoute(
             builder: (context) => const HomePage(
-              role: null,
+              // role: null,
             ),
           ),
         );

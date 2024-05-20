@@ -29,7 +29,7 @@ class _ForgetPWState extends State<ForgetPW> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://172.20.10.4:4000/api/auth/forgot-password'),
+        Uri.parse('http://172.20.10.2:4000/api/auth/forgot-password'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

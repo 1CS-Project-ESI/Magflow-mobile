@@ -10,7 +10,7 @@ class MyDrawerTitle extends StatelessWidget {
     super.key,
     required this.text,
     required this.icon,
-    required this.onTap,
+    required this.onTap, required Color textColor,
   });
 
   @override
@@ -20,11 +20,11 @@ class MyDrawerTitle extends StatelessWidget {
       child: ListTile(
         title: Text(
           text,
-          style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary),
+          style: TextStyle(color: Colors.white),
         ),
         leading: Icon(
           icon,
-          color: Theme.of(context).colorScheme.inversePrimary,
+          color: Colors.white,
         ),
         onTap: onTap,
       ),

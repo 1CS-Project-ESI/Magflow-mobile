@@ -117,6 +117,8 @@ class _NotificationPageState extends State<NotificationPage> {
       url = 'http://172.20.10.2:4000/api/notifications/responsable/$_id';
     } else if (_userRole == 'director') {
       url = 'http://172.20.10.2:4000/api/notifications/directeur/$_id';
+    } else if (_userRole == 'consumer') {
+      url = 'http://172.20.10.2:4000/api/notifications/consommateur/$_id';
     } else {
       url = 'http://172.20.10.2:4000/api/notifications/user/$_id';
       print("no id available");
@@ -146,7 +148,6 @@ class _NotificationPageState extends State<NotificationPage> {
       backgroundColor: Colors.white, // Background color set here
       appBar: AppBar(
         title: Text('Notifications'),
-      
       ),
       body: ListView.builder(
         itemCount: _notifications.length,

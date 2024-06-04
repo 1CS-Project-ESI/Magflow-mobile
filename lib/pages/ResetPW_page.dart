@@ -4,6 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+String backendIP = dotenv.env['BACKEND_IP']!;
+
+
 class ResetPasswordScreen extends StatefulWidget {
   final String resetToken;
 
@@ -36,7 +41,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     try {
       final response = await http.post(
         Uri.parse(
-            'http://172.20.10.2:4000/api/auth/reset-password/$resettoken'),
+            'http://$backendIP:4000/api/auth/reset-password/$resettoken'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

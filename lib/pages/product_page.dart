@@ -58,7 +58,7 @@ class _ProductPageState extends State<ProductPage> {
           final product = _products[index];
           return ListTile(
             title: Text(product.name),
-            subtitle: Text('\$${product.price.toString()}'),
+            subtitle: Text('\$${product.caracteristics.toString()}'),
             trailing: IconButton(
               icon: Icon(Icons.add),
               onPressed: () {

@@ -1,13 +1,19 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/auth/auth_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter_application_1/components/my_drawer.dart';
 import 'package:flutter_application_1/components/my_sliver_app_bar.dart';
 import 'package:flutter_application_1/models/commande.dart';
 import 'package:flutter_application_1/components/commandCard.dart';
-import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
+
 import 'package:flutter_application_1/pages/command_details_page.dart';
+
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+String backendIP = dotenv.env['BACKEND_IP']!;
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -47,24 +53,31 @@ class _HomePageState extends State<HomePage> {
     String url;
     Map<String, String> queryParams = {};
 
-    final _userRole = context.read<AuthProvider>().role;
-    print("the role is $_userRole");
+    // final _userRole = context.read<AuthProvider>().role;
+    // print("the role is $_userRole");
 
-    final _id = context.read<AuthProvider>().id;
-    print("the id is $_id");
+    // final _id = context.read<AuthProvider>().id;
+    // print("the id is $_id");
+
+    final prefs = await SharedPreferences.getInstance();
+    final _id = prefs.getInt('id');
+    final _userRole = prefs.getString('role');
+
+    print(_id);
+    print("the role is $_userRole");
 
     if (_userRole == 'magasinier' || _userRole == 'director') {
       url =
-          'http://172.20.10.2:4000/api/bons/getAllBonCommandInterneFFordirectorMagazinier';
-      queryParams['role'] = _userRole;
+          'http://$backendIP:4000/api/bons/getAllBonCommandInterneFFordirectorMagazinier';
+      queryParams['role'] = _userRole!;
     } else if (_userRole == 'structureresponsable') {
       final id_structureresponsable = context.read<AuthProvider>().id;
       url =
-          'http://172.20.10.2:4000/api/bons/allcomandsforresposnable/$id_structureresponsable';
+          'http://$backendIP:4000/api/bons/allcomandsforresposnable/$id_structureresponsable';
     } else {
       final id_consommateur = context.read<AuthProvider>().id;
       url =
-          'http://172.20.10.2:4000/api/bons/consumer-commands/$id_consommateur';
+          'http://$backendIP:4000/api/bons/consumer-commands/$id_consommateur';
     }
 
     final uri = Uri.parse(url).replace(queryParameters: queryParams);
@@ -128,13 +141,16 @@ class _HomePageState extends State<HomePage> {
                   onSelectionChanged: (selected) =>
                       _handleSelection(commande, selected),
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            CommandDetailsPage(commande: commande),
-                      ),
-                    );
+                    final _userRole = context.read<AuthProvider>().role;
+                    if (_userRole == 'consumer') {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              CommandDetailsPage(commande: commande),
+                        ),
+                      );
+                    }
                   },
                 );
               },

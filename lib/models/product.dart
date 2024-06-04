@@ -2,17 +2,21 @@
 class Product {
   final int id;
   final String name;
-  final double price;
+  // final String caracteristics;
 
-  Product({required this.id, required this.name, required this.price});
+  Product({required this.id, required this.name});
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
       id: json['id'],
       name: json['name'],
-      price: json['price'],
+      // caracteristics: json['caracteristics'],
     );
   }
+
+
+
+  
 }
 
 // lib/models/cart_item.dart

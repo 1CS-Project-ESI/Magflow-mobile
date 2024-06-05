@@ -1,9 +1,9 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/components/my_button.dart';
 import 'package:flutter_application_1/components/my_textfield.dart';
 import 'package:flutter_application_1/auth/auth_provider.dart';
 import 'package:provider/provider.dart';
+import '../api/firebase_api.dart';
 import 'home_page.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -20,11 +20,12 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final FirebaseApi firebaseApi = FirebaseApi();
 
-  void _handleLogin() async {
+  Future <void> _handleLogin() async {
     try {
       final response = await http.post(
-        Uri.parse('http://172.20.10.2:4000/api/auth/login'),
+        Uri.parse('http://172.20.10.5:4000/api/auth/login'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -43,12 +44,17 @@ class _LoginPageState extends State<LoginPage> {
         final authProvider = Provider.of<AuthProvider>(context, listen: false);
         authProvider.setRole(role);
         authProvider.setID(id);
+
+        // Initialize Firebase notifications with userID
+        await firebaseApi.initNotifications(id);
+
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => const HomePage(),
           ),
         );
+
       } else {
         // Login failed
         final errorMessage = jsonDecode(response.body)['message'];

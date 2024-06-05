@@ -1,17 +1,17 @@
+
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_application_1/models/product.dart';
 import 'package:flutter_application_1/providers/cart_provider.dart';
 
-class ProductCard extends StatelessWidget {
+class ProductCartCard extends StatelessWidget {
   final Product product;
-  final VoidCallback onAddToCart;
+  final int quantity;
 
-  const ProductCard({
+  const ProductCartCard({
     Key? key,
     required this.product,
-    required this.onAddToCart,
+    required this.quantity,
   }) : super(key: key);
 
   @override
@@ -29,24 +29,28 @@ class ProductCard extends StatelessWidget {
             fontSize: 16,
           ),
         ),
-        trailing: ElevatedButton(
-          onPressed: () {
-            context.read<CartProvider>().addProduct(product);
-            Fluttertoast.showToast(
-              msg: "Product added to cart",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              backgroundColor: Colors.green,
-              textColor: Colors.white,
-            );
-          },
-          style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.white, backgroundColor: Colors.green,
+        trailing: Container(
+          width: 120,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              IconButton(
+                icon: Icon(Icons.remove),
+                onPressed: () {
+                  context.read<CartProvider>().removeProduct(product);
+                },
+              ),
+              Text(quantity.toString()),
+              IconButton(
+                icon: Icon(Icons.add),
+                onPressed: () {
+                  context.read<CartProvider>().addProduct(product);
+                },
+              ),
+            ],
           ),
-          child: Text('Add to Cart'),
         ),
       ),
     );
   }
 }
-

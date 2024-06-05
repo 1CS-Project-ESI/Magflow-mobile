@@ -1,30 +1,43 @@
-// lib/providers/cart_provider.dart
-import 'package:flutter/material.dart';
-import '../models/cart_item.dart';
-import '../models/product.dart';
+
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter_application_1/models/product.dart';
 
 class CartProvider with ChangeNotifier {
-  List<CartItem> _items = [];
+  List<Product> _products = [];
+  final Map<Product, int> _productQuantities = {};
 
-  List<CartItem> get items => _items;
+  List<Product> get products => _products;
 
-  void addItem(Product product) {
-    final index = _items.indexWhere((item) => item.product.id == product.id);
-    if (index >= 0) {
-      _items[index].quantity += 1;
+  void addProduct(Product product) {
+    if (_productQuantities.containsKey(product)) {
+      _productQuantities[product] = _productQuantities[product]! + 1;
     } else {
-      _items.add(CartItem(product: product, quantity: 1));
+      _productQuantities[product] = 1;
+      _products.add(product);
     }
     notifyListeners();
   }
 
-  void removeItem(int productId) {
-    _items.removeWhere((item) => item.product.id == productId);
+  void removeProduct(Product product) {
+    if (_productQuantities.containsKey(product)) {
+      if (_productQuantities[product]! > 1) {
+        _productQuantities[product] = _productQuantities[product]! - 1;
+      } else {
+        _productQuantities.remove(product);
+        _products.remove(product);
+      }
+    }
     notifyListeners();
   }
 
   void clearCart() {
-    _items = [];
+    _products.clear();
+    _productQuantities.clear();
     notifyListeners();
+  }
+
+  int getProductQuantity(Product product) {
+    return _productQuantities[product] ?? 0;
   }
 }

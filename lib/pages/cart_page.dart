@@ -1,287 +1,124 @@
-// // lib/pages/cart_page.dart
-// import 'dart:convert';
-
-// import 'package:flutter/material.dart';
-// import 'package:provider/provider.dart';
-// import '../providers/cart_provider.dart';
-// import 'package:flutter_application_1/auth/auth_provider.dart';
-// import 'package:provider/provider.dart';
-// import 'package:http/http.dart' as http;
-// import 'package:flutter_dotenv/flutter_dotenv.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
-
-// String backendIP = dotenv.env['BACKEND_IP']!;
-
-// class CartPage extends StatelessWidget {
-//   get http => null;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final cart = Provider.of<CartProvider>(context);
-
-//     return Scaffold(
-//       appBar: AppBar(title: Text('Cart')),
-//       body: ListView.builder(
-//         itemCount: cart.items.length,
-//         itemBuilder: (context, index) {
-//           final cartItem = cart.items[index];
-//           return ListTile(
-//             title: Text(cartItem.product.name),
-//             subtitle: Text('Quantity: ${cartItem.quantity}'),
-//             trailing: IconButton(
-//               icon: Icon(Icons.remove),
-//               onPressed: () {
-//                 cart.removeItem(cartItem.product.id);
-//               },
-//             ),
-//           );
-//         },
-//       ),
-//       bottomNavigationBar: BottomAppBar(
-//         child: Padding(
-//           padding: const EdgeInsets.all(8.0),
-//           child: ElevatedButton(
-//             child: Text('Confirm Order'),
-//             onPressed: () async {
-//               // final token = await getToken();
-//               // final userId = await UserID();
-//               final prefs = await SharedPreferences.getInstance();
-//               final userId = prefs.getInt('id');
-//               final _userRole = prefs.getString('role');
-//               final token = prefs.getString('token');
-
-//               print(userId);
-//               print("the role is $_userRole");
-
-//               final now = DateTime.now().toIso8601String();
-//               final randomNumber = (100000 + (100000 * 0.1)).toInt().toString();
-//               final productsOrdered = cart.items
-//                   .map((item) => {
-//                         'id_produit': item.product.id,
-//                         'orderedquantity': item.quantity,
-//                       })
-//                   .toList();
-
-//               final response = await http.post(
-//                 Uri.parse(
-//                     'http://$backendIP:4000/api/bons/create-bon-commande-interne/$userId'),
-//                 headers: {
-//                   'Authorization': 'Bearer $token',
-//                   'Content-Type': 'application/json',
-//                 },
-//                 body: jsonEncode({
-//                   'number': randomNumber,
-//                   'date': now,
-//                   'produitsCommandes': productsOrdered,
-//                 }),
-//               );
-
-//               if (response.statusCode == 200) {
-//                 cart.clearCart();
-//                 Navigator.pushNamed(context, '/success');
-//               } else {
-//                 ScaffoldMessenger.of(context).showSnackBar(
-//                   SnackBar(content: Text('Failed to confirm order')),
-//                 );
-//               }
-//             },
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-
-
-// // lib/pages/cart_page.dart
-// import 'dart:convert';
-// import 'package:flutter/material.dart';
-// import 'package:provider/provider.dart';
-// import '../providers/cart_provider.dart';
-// import 'package:flutter_application_1/auth/auth_provider.dart';
-// import 'package:http/http.dart' as http;
-// import 'package:flutter_dotenv/flutter_dotenv.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
-
-// String backendIP = dotenv.env['BACKEND_IP']!;
-
-// class CartPage extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     final cart = Provider.of<CartProvider>(context);
-
-//     return Scaffold(
-//       appBar: AppBar(title: const Text('Cart')),
-//       body: ListView.builder(
-//         itemCount: cart.items.length,
-//         itemBuilder: (context, index) {
-//           final cartItem = cart.items[index];
-//           return ListTile(
-//             title: Text(cartItem.product.name),
-//             subtitle: Text('Quantity: ${cartItem.quantity}'),
-//             trailing: IconButton(
-//               icon: const Icon(Icons.remove),
-//               onPressed: () {
-//                 cart.removeItem(cartItem.product.id);
-//               },
-//             ),
-//           );
-//         },
-//       ),
-//       bottomNavigationBar: BottomAppBar(
-//         child: Padding(
-//           padding: const EdgeInsets.all(8.0),
-//           child: ElevatedButton(
-//             child: const Text('Confirm Order'),
-//             onPressed: () async {
-//               final prefs = await SharedPreferences.getInstance();
-//               final userId = prefs.getInt('id');
-//               final userRole = prefs.getString('role');
-//               final token = prefs.getString('token');
-
-//               print(userId);
-//               print("the role is $userRole");
-
-//               final now = DateTime.now();
-//               final orderDate = now.toIso8601String();
-//               final randomNumber = (100000 + (100000 * 0.1)).toInt().toString();
-//               final productsOrdered = cart.items
-//                   .map((item) => {
-//                         'id_produit': item.product.id,
-//                         'orderedquantity': item.quantity,
-//                       })
-//                   .toList();
-
-//               try {
-//                 final response = await http.post(
-//                   Uri.parse(
-//                       'http://$backendIP:4000/api/bons/create-bon-commande-interne/$userId'),
-//                   headers: {
-//                     'Authorization': 'Bearer $token',
-//                     'Content-Type': 'application/json',
-//                   },
-//                   body: jsonEncode({
-//                     'number': randomNumber,
-//                     'date': orderDate,
-//                     'produitsCommandes': productsOrdered,
-//                     // Add 'typecommande' if necessary
-//                   }),
-//                 );
-
-//                 if (response.statusCode == 200) {
-//                   cart.clearCart();
-//                   Navigator.pushNamed(context, '/success');
-//                 } else {
-//                   ScaffoldMessenger.of(context).showSnackBar(
-//                     SnackBar(content: Text('Failed to confirm order')),
-//                   );
-//                 }
-//               } catch (e) {
-//                 print('Error confirming order: $e');
-//                 ScaffoldMessenger.of(context).showSnackBar(
-//                   SnackBar(content: Text('Error confirming order: $e')),
-//                 );
-//               }
-//             },
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/cart_provider.dart';
-import 'package:flutter_application_1/auth/auth_provider.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-String backendIP = dotenv.env['BACKEND_IP']!;
+import 'package:flutter_application_1/providers/cart_provider.dart';
+import 'package:flutter_application_1/components/product_cart_card.dart';
+import 'package:flutter_application_1/components/product_type_dialog.dart';
 
 class CartPage extends StatelessWidget {
+  const CartPage({Key? key}) : super(key: key);
+
+  void _showProductTypeDialog(BuildContext context) {
+    final cartProvider = Provider.of<CartProvider>(context, listen: false);
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return ProductTypeDialog(
+          onDecharge: () {
+            // Handle "decharge" product type selection
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Decharge selected')),
+            );
+          },
+          onInterne: () {
+            // Handle "interne" product type selection
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Interne selected')),
+            );
+          },
+          cartProvider: cartProvider,
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final cart = Provider.of<CartProvider>(context);
-
+    final cartProvider = Provider.of<CartProvider>(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Cart')),
-      body: ListView.builder(
-        itemCount: cart.items.length,
-        itemBuilder: (context, index) {
-          final cartItem = cart.items[index];
-          return ListTile(
-            title: Text(cartItem.product.name),
-            subtitle: Text('Quantity: ${cartItem.quantity}'),
-            trailing: IconButton(
-              icon: const Icon(Icons.remove),
-              onPressed: () {
-                cart.removeItem(cartItem.product.id);
+      appBar: AppBar(
+        title: Text('Cart'),
+        actions: [
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              IconButton(
+                icon: Icon(Icons.shopping_cart),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => CartPage()),
+                  );
+                },
+              ),
+              if (cartProvider.products.isNotEmpty)
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  child: Container(
+                    padding: EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    constraints: BoxConstraints(
+                      minWidth: 16,
+                      minHeight: 16,
+                    ),
+                    child: Text(
+                      cartProvider.products.length.toString(),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                )
+            ],
+          )
+        ],
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: cartProvider.products.length,
+              itemBuilder: (context, index) {
+                final product = cartProvider.products[index];
+                return ProductCartCard(
+                  product: product,
+                  quantity: cartProvider.getProductQuantity(product),
+                );
               },
             ),
-          );
-        },
-      ),
-      bottomNavigationBar: BottomAppBar(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ElevatedButton(
-            child: const Text('Confirm Order'),
-            onPressed: () async {
-              final prefs = await SharedPreferences.getInstance();
-              final userId = prefs.getInt('id');
-              final userRole = prefs.getString('role');
-              final token = prefs.getString('token');
-
-              print(userId);
-              print("the role is $userRole");
-
-              final now = DateTime.now();
-              final orderDate = now.toIso8601String();
-              final randomNumber = (100000 + (100000 * 0.1)).toInt().toString();
-              final productsOrdered = cart.items
-                  .map((item) => {
-                        'id_produit': item.product.id,
-                        'orderedquantity': item.quantity,
-                      })
-                  .toList();
-
-              try {
-                final response = await http.post(
-                  Uri.parse(
-                      'http://$backendIP:4000/api/bons/create-bon-commande-interne/$userId'),
-                  headers: {
-                    'Authorization': 'Bearer $token',
-                    'Content-Type': 'application/json',
-                  },
-                  body: jsonEncode({
-                    'number': randomNumber,
-                    'date': orderDate,
-                    'produitsCommandes': productsOrdered,
-                    // Add 'typecommande' if necessary
-                  }),
-                );
-
-                if (response.statusCode == 200) {
-                  cart.clearCart();
-                  Navigator.pushNamed(context, '/success');
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Failed to confirm order')),
-                  );
-                }
-              } catch (e) {
-                print('Error confirming order: $e');
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Error confirming order: $e')),
-                );
-              }
-            },
           ),
-        ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    cartProvider.clearCart();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                  ),
+                  child: Text('Clear Cart'),
+                ),
+                SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    _showProductTypeDialog(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                  ),
+                  child: Text('Confirm'),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

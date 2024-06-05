@@ -23,27 +23,7 @@ class AuthProvider with ChangeNotifier {
     notifyListeners(); // Notify listeners of the change
   }
 
-  // String get token => _token;
-  // void setToken(String token) {
-  //   _token = token;
-  //   notifyListeners(); // Notify listeners of the change
-  // }
 
-  // stay logged in
-  // Future<void> saveUserCredentials() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   await prefs.setString('role', _role);
-  //   await prefs.setInt('id', _id);
-  // }
-
-  // Future<void> loadUserCredentials() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   _role = prefs.getString('role') ?? '';
-  //   _id = prefs.getInt('id') ?? 0;
-  //   notifyListeners();
-  // }
-
-  // // test if user instance exist ??
 
   bool _isLoggedIn = true; // Add this line
 
@@ -56,8 +36,5 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // Future<void> loadUserData() async {
-  //   await loadUserCredentials(); // Read stored credentials (including ID)
-  //   notifyListeners();
-  // }
+  
 }

@@ -1,3 +1,5 @@
+
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_application_1/providers/cart_provider.dart';
@@ -14,13 +16,11 @@ class CartPage extends StatelessWidget {
       builder: (BuildContext context) {
         return ProductTypeDialog(
           onDecharge: () {
-            // Handle "decharge" product type selection
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Decharge selected')),
             );
           },
           onInterne: () {
-            // Handle "interne" product type selection
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Interne selected')),
             );
@@ -36,7 +36,14 @@ class CartPage extends StatelessWidget {
     final cartProvider = Provider.of<CartProvider>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Cart'),
+        title: Text(
+          'Cart',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+          ),
+        ),
+        centerTitle: true,
         actions: [
           Stack(
             alignment: Alignment.center,
@@ -55,20 +62,21 @@ class CartPage extends StatelessWidget {
                   right: 8,
                   top: 8,
                   child: Container(
-                    padding: EdgeInsets.all(2),
+                    padding: EdgeInsets.all(4),
                     decoration: BoxDecoration(
                       color: Colors.red,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     constraints: BoxConstraints(
-                      minWidth: 16,
-                      minHeight: 16,
+                      minWidth: 20,
+                      minHeight: 20,
                     ),
                     child: Text(
                       cartProvider.products.length.toString(),
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -94,7 +102,8 @@ class CartPage extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Column(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 ElevatedButton(
                   onPressed: () {
@@ -102,18 +111,39 @@ class CartPage extends StatelessWidget {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
+                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
-                  child: Text('Clear Cart'),
+                  child: Text(
+                    'Clear Cart',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
+                  ),
                 ),
-                SizedBox(height: 10),
                 ElevatedButton(
                   onPressed: () {
                     _showProductTypeDialog(context);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green,
+                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
-                  child: Text('Confirm'),
+                  child: Text(
+                    'Confirm',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
+                  ),
                 ),
               ],
             ),

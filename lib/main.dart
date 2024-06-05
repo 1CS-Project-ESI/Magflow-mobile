@@ -9,6 +9,10 @@ import 'package:flutter_application_1/pages/splash_screen.dart';
 import 'package:flutter_application_1/themes/theme_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_application_1/firebase_options.dart';
+
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_application_1/providers/cart_provider.dart'; // Import CartProvider
 
@@ -22,6 +26,9 @@ Future<bool> isUserLoggedIn() async {
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load();
+    await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   final isLoggedIn = await isUserLoggedIn();
   final authProvider = AuthProvider();
@@ -37,6 +44,7 @@ Future<void> main() async {
       child: const MyApp(),
     ),
   );
+
 }
 
 class MyApp extends StatefulWidget {
@@ -65,6 +73,7 @@ class _MyAppState extends State<MyApp> {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+
       home: _isInitialized
           ? authProvider.isLoggedIn
               ? const HomePage()

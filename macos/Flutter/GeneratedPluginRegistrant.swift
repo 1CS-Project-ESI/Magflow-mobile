@@ -4,7 +4,9 @@
 
 import FlutterMacOS
 import Foundation
-
+import firebase_core
+import firebase_messaging
+import url_launcher_macos
 import flutter_secure_storage_macos
 import shared_preferences_foundation
 import url_launcher_macos

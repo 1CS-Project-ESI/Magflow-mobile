@@ -1,5 +1,9 @@
 
+import 'package:firebase_messaging/firebase_messaging.dart';
+
+
 // In notification_page.dart
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
@@ -75,6 +79,7 @@ class _NotificationPageState extends State<NotificationPage> {
 
   @override
   Widget build(BuildContext context) {
+    // final message = ModalRoute.of(context)!.settings.arguments as RemoteMessage;
     return Scaffold(
       backgroundColor: Colors.white, // Background color set here
       appBar: AppBar(

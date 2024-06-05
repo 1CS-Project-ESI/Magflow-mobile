@@ -7,6 +7,11 @@ import '../api/firebase_api.dart';
 import 'home_page.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+import 'package:shared_preferences/shared_preferences.dart';
+
+String backendIP = dotenv.env['BACKEND_IP']!;
 
 class LoginPage extends StatefulWidget {
   final void Function()? onTap;
@@ -25,7 +30,9 @@ class _LoginPageState extends State<LoginPage> {
   Future <void> _handleLogin() async {
     try {
       final response = await http.post(
-        Uri.parse('http://172.20.10.5:4000/api/auth/login'),
+
+        Uri.parse('http://$backendIP:4000/api/auth/login'),
+
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -40,13 +47,24 @@ class _LoginPageState extends State<LoginPage> {
         final token = data['accessToken'];
         final role = data['role'];
         final id = data['id'];
+        final structureId = data['structureId'];
 
         final authProvider = Provider.of<AuthProvider>(context, listen: false);
         authProvider.setRole(role);
         authProvider.setID(id);
 
+
         // Initialize Firebase notifications with userID
         await firebaseApi.initNotifications(id);
+
+        //  authProvider.setToken(token);
+        // authProvider.setLoggedIn(true);
+
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('accessToken', token);
+        await prefs.setString('role', role);
+        await prefs.setInt('id', id);
+
 
         Navigator.push(
           context,

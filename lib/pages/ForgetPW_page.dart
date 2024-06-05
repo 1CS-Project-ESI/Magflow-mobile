@@ -8,6 +8,12 @@ import 'dart:convert';
 import 'package:http/http.dart'
     as http; // in case of probl = (run this in the cmd) dart pub add fetch_client
 
+
+
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+String backendIP = dotenv.env['BACKEND_IP']!;
+
 class ForgetPW extends StatefulWidget {
   final void Function()? onTap;
 
@@ -29,7 +35,7 @@ class _ForgetPWState extends State<ForgetPW> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://172.20.10.2:4000/api/auth/forgot-password'),
+        Uri.parse('http://$backendIP:4000/api/auth/forgot-password'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -47,9 +53,7 @@ class _ForgetPWState extends State<ForgetPW> {
             "**************reset token in page forget  page ***********************");
         print(resetToken);
 
-        // print("resttoken is in the forget page ${resettoken} ");
-
-        // Navigate to the ResetPasswordScreen and pass the resetToken
+        
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -97,19 +101,7 @@ class _ForgetPWState extends State<ForgetPW> {
                 obscureText: false),
             // password
             const SizedBox(height: 25),
-            // MyTextField(
-            //     controller: passwordController,
-            //     hintText: "password",
-            //     obscureText: true),
-
-            // const SizedBox(height: 25),
-            // MyTextField(
-            //     controller: confirmpasswordController,
-            //     hintText: "confirm password",
-            //     obscureText: true),
-
-            // // Login Button (not functional yet)
-            // const SizedBox(height: 25),
+           
             MyButton(
               text: "Envoyer",
               onTap: _handelForgetPassword,

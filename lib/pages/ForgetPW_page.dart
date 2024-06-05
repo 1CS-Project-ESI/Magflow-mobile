@@ -53,9 +53,7 @@ class _ForgetPWState extends State<ForgetPW> {
             "**************reset token in page forget  page ***********************");
         print(resetToken);
 
-        // print("resttoken is in the forget page ${resettoken} ");
-
-        // Navigate to the ResetPasswordScreen and pass the resetToken
+        
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -103,19 +101,7 @@ class _ForgetPWState extends State<ForgetPW> {
                 obscureText: false),
             // password
             const SizedBox(height: 25),
-            // MyTextField(
-            //     controller: passwordController,
-            //     hintText: "password",
-            //     obscureText: true),
-
-            // const SizedBox(height: 25),
-            // MyTextField(
-            //     controller: confirmpasswordController,
-            //     hintText: "confirm password",
-            //     obscureText: true),
-
-            // // Login Button (not functional yet)
-            // const SizedBox(height: 25),
+           
             MyButton(
               text: "Envoyer",
               onTap: _handelForgetPassword,
